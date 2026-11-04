@@ -8,7 +8,7 @@ SYMBOLS = {
     "C": list("bcdfgklmnprstvz") + ["ck", "ld", "mp", "nd", "ng", "rd", "rk", "rn", "st", "sk", "th"],
     "D": ["gr", "gl", "bl", "dr", "kr", "z", "g"],            # "dumb-sounding" consonants
     
-    "i": ["Stinky", "Grumbly", "Smelly", "Lumpy", "Soggy", "Doofy", "Poopy", "Grimy", "Fuggly"],    # insults
+    "i": ["Stinky", "Grumbly", "Smelly", "Lumpy", "Soggy", "Doofy", "Poopy", "Grimy", "Fuggly", "Numpy"],    # insults
     "m": ["Fluffy", "Cuddle", "Snuggle", "Sweetie", "Wiggle", "Floofy", "Fuzzy", "Nuzzle", "Honey"],   # mushy
     "M": ["kins", "bear", "pie", "bun", "toes", "cakes", "poo", "noodle", "chonk"],               # mushy endings
     "k": ["Pickle", "Bucket", "Turnip", "Sock", "Biscuit", "Gravy", "Noodle", "Crumpet"],

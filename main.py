@@ -1,6 +1,8 @@
+
 import fullcook
 import fullrand
 import levelselect
+import name
 
 def main_menu():
   while True:
@@ -14,7 +16,8 @@ def main_menu():
       1. Raw AF
       2. Select Temperature
       3. Fully Cooked
-      4. Exit
+      4. Random Name Generator
+      5. Exit
       """
     )
     selection = input("<(^_^<) <(^_^)> (>^_^)> ? ")
@@ -27,6 +30,8 @@ def main_menu():
       case "3":
         fullcook.wellDone()
       case "4":
+        print(name.randName())
+      case "5":
         print("Exiting...")
         exit()
       case _:

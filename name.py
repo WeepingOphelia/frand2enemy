@@ -11,6 +11,19 @@ def name_method(func):
     return func
 
 @name_method
+def from_ironarachne():
+    races = ["dragonborn", "dwarf", "elf", "gnome", "goblin", "half-elf", "half-orc", "halfling", "human", "orc", "tiefling", "troll"]
+    url = "https://names.ironarachne.com/race/" + random.choice(races)
+    res = req.get(url + "/given/1", timeout=5)
+    res.raise_for_status()
+    n = res.json()["names"][0]
+    if random.random() < 0.5:
+        res = req.get(url + "/family/1", timeout=5)
+        res.raise_for_status()
+        n += " " + res.json()["names"][0]
+    return n
+
+@name_method
 def from_randomapi():
     url, parse = random.choice([
         ("https://randomapi.dev/api/names?count=1", lambda d: d[0]["firstName"] + " " + d[0]["lastName"]),
