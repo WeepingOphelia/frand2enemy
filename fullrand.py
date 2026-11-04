@@ -1,16 +1,19 @@
 import json
 import numpy as np
+import name
 
-import character
+import character as char
 
 from bs4 import BeautifulSoup
 
 rng = np.random.default_rng()
-newc = character.Character()
+newc = char.Character()
 
 def rawAF():
   print("Yoloing new character...")
   rollStats()
+  print("Rolling name... ")
+  newc.name = name.randName()
   print("Selecting Ancestry... ")
   newc.anc = ancSelect()
   print("Selecting Background... ")
@@ -25,16 +28,24 @@ def ancSelect():
   an = randSelect("ancestries")
   print("You're a (probably disgusting)", an["name"], "\n")
 #    print(BeautifulSoup(an["system"]["description"]["value"], "html.parser").find("p").get_text(strip=True))
-  for b in an["system"]["boosts"].values():
-      if len(b["value"]) == 1:
-        newc.stat[b["value"][0]] += 2
+  boosts = an["system"]["boosts"]
+  if len(boosts["0"]["value"]) != 1:
+    newc.stat[boosts["0"]["value"][rng.integers(0, 6)]] += 2
+  else:
+    newc.stat[boosts["0"]["value"][0]] += 2
+  if len(boosts["1"]["value"]) == 1:
+    newc.stat[boosts["1"]["value"][0]] += 2
   for f in an["system"]["flaws"].values():
+    if len(f["value"]) == 1:
       newc.stat[f["value"][0]] -= 2
   return an["name"]
 
 def bgSelect():
   bg = randSelect("backgrounds")
   print("You're a lowly", bg["name"], "\n")
+  for b in bg["system"]["boosts"].values():
+    if len(b["value"]) == 1:
+      newc.stat[b["value"][0]] += 2
   return bg["name"]
 
 def classSelect():
