@@ -2,6 +2,7 @@ import json
 import numpy as np
 import name
 import math
+import random
 
 import character as char
 
@@ -24,7 +25,8 @@ def rawAF():
   cl, newc.lvl = classSelect()
   newc.cl = cl["name"]
   initStats(an, bg, cl)
-  print(newc)
+  newc.printChar()
+#  print(newc)
   return newc
 
 
@@ -67,6 +69,8 @@ def initStats(an, bg, cl):
   stat_ids = ["str", "dex", "con", "int", "wis", "cha"]
   ka = rng.choice(cl["system"]["keyAbility"]["value"])
 
+  # INITIAL STAT ROLL
+
   rolls = rollStats()
   newc.stat[ka] = max(rolls)
   rolls.remove(max(rolls))
@@ -80,9 +84,11 @@ def initStats(an, bg, cl):
     print(f"{stat.upper()}: {value}")
   print("")
 
+  # ANC BOOSTS
+
   boosts = an["system"]["boosts"]
   if len(boosts["0"]["value"]) != 1:
-    if rng.choice(10) > 8:
+    if rng.choice(10) < 8:
       newc.stat[ka] += 2
     else:
       newc.stat[boosts["0"]["value"][rng.integers(0, 6)]] += 2
@@ -94,9 +100,22 @@ def initStats(an, bg, cl):
     if len(f["value"]) == 1:
       newc.stat[f["value"][0]] -= 2
 
+  # BG BOOSTS
+
   for b in bg["system"]["boosts"].values():
     if len(b["value"]) == 1:
       newc.stat[b["value"][0]] += 2
+
+  # LEVEL 1 4xBOOST
+
+  bs = [ka]
+  abb = stat_ids
+  abb.remove(ka)
+  bs.append(random.sample(abb, k=3))
+  newc.boostStats(abb)
+
+
+  # ABILITY MODIFIERS AND SAVES
 
   amod = {}
   for s in newc.stat:
