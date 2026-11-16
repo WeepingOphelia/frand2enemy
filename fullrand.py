@@ -8,16 +8,22 @@ import character as char
 
 from bs4 import BeautifulSoup
 
+STAT_IDS = ["str", "dex", "con", "int", "wis", "cha"]
+SKILL_IDS = ["acrobatics", "arcana", "athletics", "crafting", "deception", "diplomacy", "intimidation", "medicine", "nature", "occultism", "performance", "religion", "society", "stealth", "survival", "thievery"]
+
 rng = np.random.default_rng()
 newc = char.Character()
 
 def rawAF():
-  print("Yoloing new character...")
-  print("Rolling name... ")
+  print("Yoloing new character...\n")
+  print("Rolling name... \n")
   newc.name = name.randName()
+  print(f"Hello - {newc.name}\n")
   print("Selecting Ancestry... ")
   an = ancSelect()
   newc.anc = an["name"]
+  for s in SKILL_IDS:
+    newc.skills[s] = 0
   print("Selecting Background... ")
   bg = bgSelect()
   newc.bg = bg["name"]
@@ -32,23 +38,54 @@ def rawAF():
 
 def ancSelect():
   an = randSelect("ancestries")
-  print("You're a (probably disgusting)", an["name"], "\n")
-#    print(BeautifulSoup(an["system"]["description"]["value"], "html.parser").find("p").get_text(strip=True))
+  print(f"You're a (probably disgusting) {an["name"]}\n")
+
+  # ADD ANC SENSES
   if an["system"]["vision"] != "normal":
     newc.senses.append(an["system"]["vision"])
+
+  # ADD ANC FEATS
+  for v in an["system"]["items"].values():
+    if "ancestryfeatures" in v["uuid"]:
+      newc.feats.append(v["name"])
+  
   return an
 
 def bgSelect():
   bg = randSelect("backgrounds")
   print("You're a lowly", bg["name"], "\n")
-  newc.skills += [s.title() for group in bg["system"]["trainedSkills"].values() for s in group]
+
+  # ADD BG SKILLS
+
+  bgs = bg["system"]["trainedSkills"]["value"]
+  bgl = bg["system"]["trainedSkills"]["lore"]
+  for s in bgs:
+    newc.skills[s] = 1
+  for l in bgl:
+    newc.lore[l] = 1
+  
   return bg
 
 def classSelect():
   cl = randSelect("classes")
+
+  # ROLL LVL
   lvl = int(np.clip(np.round(rng.lognormal(mean=1.45, sigma=0.85) - 0.4), 1, 20))
   print(f"You're a level {lvl} {cl['name']}.  Of course you are, you filthy casual.\n")
-#  newc.skills += [s.title() for group in cl["system"]["trainedSkills"].values() for s in group]
+
+  # CLASS SKILLS
+  cs = cl["system"]["trainedSkills"]["additional"]
+  for sk in cl["system"]["trainedSkills"]["value"]:
+    if newc.skills[sk] > 0:
+      cs += 1
+    else:
+      newc.skills[sk] = 1
+  vs = [s for s, v in newc.skills.items() if v == 0]
+  si = random.sample(vs, k=cs)
+  for s in si:
+    newc.skills[s] = 1
+
+
   return cl, lvl
 
 def randSelect(pack):
@@ -66,23 +103,23 @@ def rollStats():
 
 def initStats(an, bg, cl):
 
-  stat_ids = ["str", "dex", "con", "int", "wis", "cha"]
   ka = rng.choice(cl["system"]["keyAbility"]["value"])
 
   # INITIAL STAT ROLL
 
   rolls = rollStats()
+  print(rolls, "\n")
   newc.stat[ka] = max(rolls)
   rolls.remove(max(rolls))
 
-  for s in stat_ids:
+  for s in STAT_IDS:
     if s != ka:
       newc.stat[s] = rolls.pop()
 
-  print("Your base stats are:")
-  for stat, value in newc.stat.items():
-    print(f"{stat.upper()}: {value}")
-  print("")
+#  print("Your base stats are:")
+#  for stat, value in newc.stat.items():
+#    print(f"{stat.upper()}: {value}")
+#  print("")
 
   # ANC BOOSTS
 
@@ -109,11 +146,10 @@ def initStats(an, bg, cl):
   # LEVEL 1 4xBOOST
 
   bs = [ka]
-  abb = stat_ids
+  abb = STAT_IDS
   abb.remove(ka)
   bs.append(random.sample(abb, k=3))
   newc.boostStats(abb)
-
 
   # ABILITY MODIFIERS AND SAVES
 
@@ -126,7 +162,9 @@ def initStats(an, bg, cl):
   newc.saves["ref"] = (saves["reflex"] * 2) + amod["dex"] + newc.lvl
   newc.saves["will"] = (saves["will"] * 2) + amod["wis"] + newc.lvl
 
+  # Initial HP Calculation
 
+  newc.hp = an["system"]["hp"] + cl["system"]["hp"] + amod["con"]
 
 
 if __name__ == "__main__":
