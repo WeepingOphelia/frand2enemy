@@ -39,12 +39,14 @@ def ancSelect():
 def bgSelect():
   bg = randSelect("backgrounds")
   print("You're a lowly", bg["name"], "\n")
+  newc.skills += [s.title() for group in bg["system"]["trainedSkills"].values() for s in group]
   return bg
 
 def classSelect():
   cl = randSelect("classes")
   lvl = int(np.clip(np.round(rng.lognormal(mean=1.45, sigma=0.85) - 0.4), 1, 20))
   print(f"You're a level {lvl} {cl['name']}.  Of course you are, you filthy casual.\n")
+#  newc.skills += [s.title() for group in cl["system"]["trainedSkills"].values() for s in group]
   return cl, lvl
 
 def randSelect(pack):
