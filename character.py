@@ -2,6 +2,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 import json
 import numpy as np
+import string
 
 from bs4 import BeautifulSoup
 
@@ -11,7 +12,7 @@ def format_skills(skills):
   groups = defaultdict(list)
   for n, r in skills.items():
     if r > 0:
-      groups[r].append(n.capitalize())
+      groups[r].append(string.capwords(n))
   return [
     f"{l}: {', '.join(sorted(groups[r]))}"
     for r, l in SKILL_RANKS.items()
@@ -55,7 +56,7 @@ class Character:
     # NAME LVL CLASS
     print(f"{self.name} Lvl {self.lvl} {self.cl}")
     # ANC BG
-    print(f"{self.anc} Background: {self.bg}\n")
+    print(f"{self.anc} {self.bg}\n")
     # LANG
     print(f"Languages: ")
     # SENSE

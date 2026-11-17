@@ -4,6 +4,7 @@ import name
 import math
 import random
 
+
 import character as char
 
 from bs4 import BeautifulSoup
@@ -103,7 +104,10 @@ def rollStats():
 
 def initStats(an, bg, cl):
 
-  ka = rng.choice(cl["system"]["keyAbility"]["value"])
+  if cl["name"] == "Psychic":
+    ka = rng.choice(["int", "char"])
+  else:
+    ka = rng.choice(cl["system"]["keyAbility"]["value"])
 
   # INITIAL STAT ROLL
 
