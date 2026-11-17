@@ -9,8 +9,8 @@ import character as char
 
 from bs4 import BeautifulSoup
 
-STAT_IDS = ["str", "dex", "con", "int", "wis", "cha"]
 SKILL_IDS = ["acrobatics", "arcana", "athletics", "crafting", "deception", "diplomacy", "intimidation", "medicine", "nature", "occultism", "performance", "religion", "society", "stealth", "survival", "thievery"]
+STAT_IDS = ["str", "dex", "con", "int", "wis", "cha"]
 
 rng = np.random.default_rng()
 newc = char.Character()
@@ -29,9 +29,11 @@ def rawAF():
   bg = bgSelect()
   newc.bg = bg["name"]
   print("Selecting Class... ")
-  cl, newc.lvl = classSelect()
+  cl, lvl = classSelect()
   newc.cl = cl["name"]
   initStats(an, bg, cl)
+  if lvl > 1:
+    lvlChar(an, cl, lvl)
   newc.printChar()
 #  print(newc)
   return newc
@@ -39,6 +41,7 @@ def rawAF():
 
 def ancSelect():
   an = randSelect("ancestries")
+  newc.anchp = an["system"]["hp"]
   print(f"You're a (probably disgusting) {an["name"]}\n")
 
   # ADD ANC SENSES
@@ -69,6 +72,7 @@ def bgSelect():
 
 def classSelect():
   cl = randSelect("classes")
+  newc.clhp = cl["system"]["hp"]
 
   # ROLL LVL
   lvl = int(np.clip(np.round(rng.lognormal(mean=1.45, sigma=0.85) - 0.4), 1, 20))
@@ -104,33 +108,39 @@ def rollStats():
 
 def initStats(an, bg, cl):
 
+  # TEMP PSYCHIC FIX
+
   if cl["name"] == "Psychic":
-    ka = rng.choice(["int", "char"])
+    newc.ka = rng.choice(["int", "char"])
   else:
-    ka = rng.choice(cl["system"]["keyAbility"]["value"])
+
+  # SET KEY ABILITY
+
+    newc.ka = rng.choice(cl["system"]["keyAbility"]["value"])
 
   # INITIAL STAT ROLL
 
   rolls = rollStats()
   print(rolls, "\n")
-  newc.stat[ka] = max(rolls)
+  newc.stat[newc.ka] = max(rolls)
   rolls.remove(max(rolls))
 
   for s in STAT_IDS:
-    if s != ka:
+    if s != newc.ka:
       newc.stat[s] = rolls.pop()
 
-#  print("Your base stats are:")
-#  for stat, value in newc.stat.items():
-#    print(f"{stat.upper()}: {value}")
-#  print("")
+
+  bs = "Your base stats are:"
+  for stat, value in newc.stat.items():
+    bs += f"{stat.upper()}: {value}"
+  print(bs)
 
   # ANC BOOSTS
 
   boosts = an["system"]["boosts"]
   if len(boosts["0"]["value"]) != 1:
     if rng.choice(10) < 8:
-      newc.stat[ka] += 2
+      newc.stat[newc.ka] += 2
     else:
       newc.stat[boosts["0"]["value"][rng.integers(0, 6)]] += 2
   else:
@@ -147,28 +157,34 @@ def initStats(an, bg, cl):
     if len(b["value"]) == 1:
       newc.stat[b["value"][0]] += 2
 
-  # LEVEL 1 4xBOOST
+  # SAVES
 
-  bs = [ka]
-  abb = STAT_IDS
-  abb.remove(ka)
-  bs.append(random.sample(abb, k=3))
-  newc.boostStats(abb)
+  newc.basesaves = cl["system"]["savingThrows"]
+  
 
-  # ABILITY MODIFIERS AND SAVES
 
-  amod = {}
-  for s in newc.stat:
-    amod[s] = math.floor((newc.stat[s] - 10) / 2)
 
-  saves = cl["system"]["savingThrows"]
-  newc.saves["fort"] = (saves["fortitude"] * 2) + amod["con"] + newc.lvl
-  newc.saves["ref"] = (saves["reflex"] * 2) + amod["dex"] + newc.lvl
-  newc.saves["will"] = (saves["will"] * 2) + amod["wis"] + newc.lvl
+def lvlChar(cl, lvl):
+  while newc.lvl < lvl:
+    newc.lvl += 1
+    if newc.lvl == 1 or newc.lvl % 5 == 0:
+      newc.abBoost()
+    if newc.lvl in cl["system"]["skillIncreaseLevels"]:
+      newc.skIncrease()
+    if newc.lvl in cl["system"]["ancestryFeatLevels"]:
+      newc.selectFeat("an")
+    if newc.lvl in cl["system"]["classFeatLevels"]:
+      newc.selectFeat("cl")
+    if newc.lvl in cl["system"]["generalFeatLevels"]:
+      newc.selectFeat("gen")
+    if newc.lvl in cl["system"]["skillFeatLevels"]:
+      newc.selectFeat("sk")
+  newc.calcHP()
+  newc.calcSaves()
+    
+    
 
-  # Initial HP Calculation
 
-  newc.hp = an["system"]["hp"] + cl["system"]["hp"] + amod["con"]
 
 
 if __name__ == "__main__":
