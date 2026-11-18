@@ -5,8 +5,6 @@ import numpy as np
 import random
 import string
 
-# from bs4 import BeautifulSoup
-
 SKILL_RANKS = {1: "Trained", 2: "Expert", 3: "Master", 4: "Legendary"}
 STAT_IDS = ["str", "dex", "con", "int", "wis", "cha"]
 SKILL_TYPES = {
@@ -69,6 +67,9 @@ class Character:
   senses: list = field(default_factory=list)
 
   def addFeat(self, f):
+    if f["name"] in self.feats:
+      print(f"{f["name"]} already known.")
+      return
     self.feats.append(f["name"])
     print(f"Added feat - {f["name"]}")
     for r in f["system"]["rules"]:

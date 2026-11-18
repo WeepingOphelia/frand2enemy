@@ -1,13 +1,9 @@
 import json
 import numpy as np
 import name
-# import math
-# import random
 
 
 import character as char
-
-# from bs4 import BeautifulSoup
 
 SKILL_IDS = ["acrobatics", "arcana", "athletics", "crafting", "deception", "diplomacy", "intimidation", "medicine", "nature", "occultism", "performance", "religion", "society", "stealth", "survival", "thievery"]
 RANKS = {"trained": 1, "expert": 2, "master": 3, "legendary": 4}
