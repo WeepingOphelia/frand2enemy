@@ -5,6 +5,8 @@ from skeetorink import GENERATORS
 
 
 NAME_METHODS = []
+TITLES = ["Sir", "Madam", "Mr.", "Mrs.", "Ms.", "Miss", "Mister", "Lord", "Lady", "Duke", "Duchess", "M'lord", "Milady", "Mx.", "Dr.", "Rev.", "Dame", "Baron", "Baroness"]
+SUFFIXES = ["Jr.", "Sr.", "Esq.", "III", "IV", "VII", "II"]
 
 def name_method(func):
     NAME_METHODS.append(func)
@@ -21,17 +23,40 @@ def from_ironarachne():
         res = req.get(url + "/family/1", timeout=5)
         res.raise_for_status()
         n += " " + res.json()["names"][0]
+    if random.random() < 0.2:
+        n = (random.choice(TITLES) + " " + n)
+    if random.random() < 0.1:
+        n += (" " + random.choice(SUFFIXES))
     return n
 
-@name_method
-def from_randomapi():
-    url, parse = random.choice([
-        ("https://randomapi.dev/api/names?count=1", lambda d: d[0]["firstName"] + " " + d[0]["lastName"]),
-        ("https://randomapi.dev/api/words?type=noun&count=1", lambda d: d[0]["word"][:1].upper() + d[0]["word"][1:]),
-    ])
-    res = req.get(url, timeout=5)
-    res.raise_for_status()
-    return parse(res.json()["data"])
+# @name_method
+# def from_randomapi():
+#     baseUrl = "https://randomapi.dev/api/"
+#     format = []
+#     if random.random() < 0.1:
+#         format.append("t")
+#     if random.random() < .5:
+#         format.append("f")
+#         if random.random() < .5:
+#             format.append("l")
+#     else:
+#         format.append("w")
+#     if random.random() 
+# 
+# 
+#     method = random.choice([
+#         "firstlast",
+#         "first",
+#         "titlename",
+#         "word",
+#         "titleword",
+# 
+#         ("names?count=1", lambda d: d[0]["firstName"] + " " + d[0]["lastName"]),
+#         ("words?type=noun&count=1", lambda d: d[0]["word"][:1].upper()),
+#     ])
+#     res = req.get(baseUrl + url, timeout=5)
+#     res.raise_for_status()
+#     return parse(res.json()["data"])
 
 @name_method
 def from_skeetorink():
