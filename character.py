@@ -113,7 +113,9 @@ class Character:
     print(f"Placeholder {type} feat selection (Lvl {self.lvl})")
 
   def skIncrease(self):
-    if self.lvl < 7:
+    if self.lvl == 1:
+      skmax = 1
+    elif self.lvl < 7:
       skmax = 2
     elif self.lvl < 15:
       skmax = 3
