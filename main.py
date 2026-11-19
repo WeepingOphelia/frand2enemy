@@ -1,7 +1,5 @@
 
-import fullcook
 import fullrand
-import levelselect
 import name
 
 def main_menu():
@@ -15,7 +13,7 @@ def main_menu():
       Select Option:
       1. Raw AF
       2. Select Temperature
-      3. Fully Cooked
+      3. Fully Cooked - (NOT YET IMPLEMENTED)
       4. Random Name Generator
       5. Exit
       """
@@ -24,11 +22,23 @@ def main_menu():
 
     match selection:
       case "1":
-        fullrand.rawAF()
+        fullrand.rawAF(0)
       case "2":
-        levelselect.lvlSelect()
+        x = True
+        while x:
+          lvl = input("Enter desired character level (1-20) - ")
+          try: 
+            lvl = int(lvl)
+          except Exception as e:
+            print(f"Do you know what a number is? {e}")
+            continue
+          if 1 <= lvl <= 20:
+            x = False
+            fullrand.rawAF(lvl)
+          else:
+            print(f"Can you count or...?")
       case "3":
-        fullcook.wellDone()
+        print("Can you read???")
       case "4":
         print(name.randName())
       case "5":

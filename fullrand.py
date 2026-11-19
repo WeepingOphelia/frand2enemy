@@ -12,7 +12,7 @@ STAT_IDS = ["str", "dex", "con", "int", "wis", "cha"]
 rng = np.random.default_rng()
 newc = char.Character()
 
-def rawAF():
+def rawAF(lvl):
   print("Yoloing new character...\n")
   print("Rolling name... \n")
   newc.name = name.randName()
@@ -26,7 +26,9 @@ def rawAF():
   bg = bgSelect()
   newc.bg = bg["name"]
   print("Selecting Class... ")
-  cl, lvl = classSelect()
+  if lvl == 0:
+    lvl = lvlSelect()
+  cl = classSelect(lvl)
   newc.cl = cl
   initStats(an, bg, cl)
   if newc.amod("int") > 0:
@@ -77,13 +79,10 @@ def bgSelect():
   
   return bg
 
-def classSelect():
+def classSelect(lvl):
   cl = randSelect("classes")
   newc.clhp = cl["system"]["hp"]
   newc.per = cl["system"]["perception"]
-
-  # ROLL LVL
-  lvl = int(np.clip(np.round(rng.lognormal(mean=1.45, sigma=0.85) - 0.4), 1, 20))
   print(f"You're a level {lvl} {cl['name']}.  Of course you are, you filthy casual.\n")
 
   # CLASS SKILLS
@@ -99,7 +98,10 @@ def classSelect():
     newc.skills[s] = 1
 
 
-  return cl, lvl
+  return cl
+
+def lvlSelect():
+  return int(np.clip(np.round(rng.lognormal(mean=1.45, sigma=0.85) - 0.4), 1, 20))
 
 def randSelect(pack):
   with open(f"json-assets/packs/{pack}.json", "r", encoding="utf-8") as f:
