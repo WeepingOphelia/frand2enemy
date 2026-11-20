@@ -10,7 +10,6 @@ RANKS = {"trained": 1, "expert": 2, "master": 3, "legendary": 4}
 STAT_IDS = ["str", "dex", "con", "int", "wis", "cha"]
 
 rng = np.random.default_rng()
-newc = char.Character()
 
 def rawAF(lvl):
   newc = char.Character()
@@ -19,29 +18,29 @@ def rawAF(lvl):
   newc.name = name.randName()
   print(f"Hello - {newc.name}\n")
   print("Selecting Ancestry... ")
-  an = ancSelect()
+  an = ancSelect(newc)
   newc.anc = an["name"]
   for s in SKILL_IDS:
     newc.skills[s] = 0
   print("Selecting Background... ")
-  bg = bgSelect()
+  bg = bgSelect(newc)
   newc.bg = bg["name"]
   print("Selecting Class... ")
   if lvl == 0:
     lvl = lvlSelect()
-  cl = classSelect(lvl)
+  cl = classSelect(newc, lvl)
   newc.cl = cl
-  initStats(an, bg, cl)
+  initStats(newc, an, bg, cl)
   if newc.amod("int") > 0:
     for _ in range(newc.amod("int")):
       newc.skIncrease()
-  lvlChar(cl, lvl)
+  lvlChar(newc, cl, lvl)
   newc.printChar()
 #  print(newc)
   return newc
 
 
-def ancSelect():
+def ancSelect(newc):
   an = randSelect("ancestries")
   newc.anchp = an["system"]["hp"]
   newc.size = an["system"]["size"]
@@ -59,7 +58,7 @@ def ancSelect():
   
   return an
 
-def bgSelect():
+def bgSelect(newc):
   bg = randSelect("backgrounds")
   print("You're a lowly", bg["name"], "\n")
 
@@ -80,7 +79,7 @@ def bgSelect():
   
   return bg
 
-def classSelect(lvl):
+def classSelect(newc, lvl):
   cl = randSelect("classes")
   newc.clhp = cl["system"]["hp"]
   newc.per = cl["system"]["perception"]
@@ -109,7 +108,7 @@ def randSelect(pack):
     data = json.load(f)
     return data[rng.integers(0, len(data))]
 
-def selectFeat(type):
+def selectFeat(newc, type):
   vfs = []
   with open(f"json-assets/packs/feats.json", "r", encoding="utf-8") as f:
     data = json.load(f)
@@ -182,7 +181,7 @@ def rollStats():
     rolls.append(int(sum(roll[1:])))
   return rolls
 
-def initStats(an, bg, cl):
+def initStats(newc, an, bg, cl):
 
   # TEMP PSYCHIC FIX
 
@@ -237,7 +236,7 @@ def initStats(an, bg, cl):
 
   newc.basesaves = cl["system"]["savingThrows"]
   
-def lvlChar(cl, lvl):
+def lvlChar(newc, cl, lvl):
   while newc.lvl < lvl:
     newc.lvl += 1
     print(f"Leveling {newc.name} to {newc.lvl}...")
@@ -249,15 +248,15 @@ def lvlChar(cl, lvl):
       if v["level"] == newc.lvl:
         newc.addFeat(wikiFeat(v["uuid"].split(".")[-1], "cl"))
     if newc.lvl in cl["system"]["ancestryFeatLevels"]["value"]:
-      newc.addFeat(selectFeat("ancestry"))
+      newc.addFeat(selectFeat(newc, "ancestry"))
     if newc.lvl in cl["system"]["classFeatLevels"]["value"]:
-      newc.addFeat(selectFeat("class"))
+      newc.addFeat(selectFeat(newc, "class"))
     if newc.lvl in cl["system"]["generalFeatLevels"]["value"]:
-      newc.addFeat(selectFeat("general"))
+      newc.addFeat(selectFeat(newc, "general"))
     if newc.lvl in cl["system"]["skillFeatLevels"]["value"]:
-      newc.addFeat(selectFeat("skill"))
+      newc.addFeat(selectFeat(newc, "skill"))
   newc.calcHP()
   newc.calcSaves()
 
 if __name__ == "__main__":
-  rawAF()
+  rawAF(0)
