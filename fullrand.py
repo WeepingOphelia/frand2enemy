@@ -13,6 +13,7 @@ rng = np.random.default_rng()
 newc = char.Character()
 
 def rawAF(lvl):
+  newc = char.Character()
   print("Yoloing new character...\n")
   print("Rolling name... \n")
   newc.name = name.randName()
