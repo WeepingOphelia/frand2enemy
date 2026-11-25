@@ -54,6 +54,7 @@ class Character:
   skills: dict = field(default_factory=dict)
   lore: dict = field(default_factory=dict)
   feats: list = field(default_factory=list)
+  arch: dict = field(default_factory=dict)
   basesaves: dict = field(default_factory=lambda: {
     "fort": 0,
     "ref": 0,

@@ -5,7 +5,7 @@ from skeetorink import GENERATORS
 
 
 NAME_METHODS = []
-TITLES = ["Sir", "Madam", "Mr.", "Mrs.", "Ms.", "Miss", "Mister", "Lord", "Lady", "Duke", "Duchess", "M'lord", "Milady", "Mx.", "Dr.", "Rev.", "Dame", "Baron", "Baroness", "Prof"]
+TITLES = ["Sir", "Madam", "Mr.", "Mrs.", "Ms.", "Miss", "Mister", "Lord", "Lady", "Duke", "Duchess", "M'lord", "Milady", "Mx.", "Dr.", "Rev.", "Dame", "Baron", "Baroness", "Prof", "Brother", "Sister"]
 SUFFIXES = ["Jr.", "Sr.", "Esq.", "III", "IV", "VII", "II"]
 
 rng = np.random.default_rng()
@@ -34,18 +34,18 @@ def from_ironarachne():
 @name_method
 def from_randomapi():
     format = []
-    if rng.random() < 0.1:
+    if rng.random() < 0.15:
         format.append("t")
     if rng.random() < 0.6:
         format.append("f")
     else:
         format.append("n")
-    if rng.random() < 0.5:
+    if rng.random() < 0.7:
         format[-1] += "l"
         
-    if rng.random() < 0.05:
-        format.append("s")
     if rng.random() < 0.1:
+        format.append("s")
+    if rng.random() < 0.2:
         format.append("e")
 
     def apiHelper(w):

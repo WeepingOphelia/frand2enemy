@@ -125,14 +125,24 @@ def selectFeat(newc, type):
       # CHECK IF FEAT IN CLASS FEATURES
       if feat["name"] in [i["name"] for i in newc.cl["system"]["items"].values()]:
         continue
-
+      
       # CHECK ANCESTRY
       if type == "ancestry" and newc.anc.lower() not in feat["system"]["traits"]["value"]:
+        continue
+
+      # CHECK CLASS
+      if type == "class" and newc.cl["name"].lower() not in feat["system"]["traits"]["value"]:
         continue
 
       # CHECK LEVEL REQ
       if feat["system"]["level"]["value"] > newc.lvl:
         continue
+
+      # CHECK DEDICATION
+      if len(newc.arch) != 0 and "Dedication" in feat["name"]:
+        for v in newc.arch.values():
+          if v < 2:
+            continue
 
       # CHECK FOR PREREQS
       reqs = feat["system"]["prerequisites"]["value"]
@@ -158,8 +168,19 @@ def selectFeat(newc, type):
 
         if len(ok) == len(reqs):
           vfs.append(feat)
-          
-    return vfs[rng.integers(len(vfs))]
+
+    newfeat = vfs[rng.integers(len(vfs))]
+    
+    if "Dedication" in newfeat["name"]:
+      newarch = " ".join(newfeat["name"].split()[:-1])
+      newc.arch[newarch] = 1
+    if "archetype" in newfeat["system"]["traits"]["value"]:
+      for req in newfeat["system"]["prerequisites"]["value"]:
+        for a in newc.arch.keys():
+          if a + " Dedication" == req["value"]:
+            newc.arch[a] += 1
+
+    return newfeat
 
 def wikiFeat(uuid, type):
   d = "feats"

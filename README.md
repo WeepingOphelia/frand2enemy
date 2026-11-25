@@ -8,18 +8,18 @@ It uses the json-assets provided by Foundry Virtual Tabletop for relevant game d
 
 ###### What this does NOT do:
 
-Create detailed character descriptions, intricate feat synergies, beautiful character sheets with automated interfaces, ask the DM for permission etc.
+Create detailed character descriptions, intricate feat synergies, beautiful character sheets with automated interfaces, ask the GM for permission etc.
 
 ###### Current Version:
 
-Random name, ancestry, background, class, level - feat and skill assignments per class description.  Character will generate and print to console.  Saves, skills, HP, senses, perception relatively accurate.  Ability score uses rolling method (4d6, drop lowest)
+Random name, ancestry, background, class, level - feat and skill assignments per class description.  Character will generate and print to console.  Saves, skills, HP, senses, perception relatively accurate.  Ability score uses rolling method (4d6, drop lowest). You may also choose "Select Temperature" mode to bake a character of a certain level.
 
 ###### Future Improvements:
 
-- AC, Weapon/Armor Proficiency, 
+- AC, Weapon/Armor Proficiency
 - Fine-tuning generation/reorganization
 - Ability boost from base 10 (non-roll/normal method)
-- Ability to generate a character of a specified level (very likely)
+~~- Ability to generate a character of a specified level (very likely)~~ (done)
 - Full Cook Generation Mode - prompts for everything (improbable)
 
 ##### Install/Requirements
@@ -30,7 +30,7 @@ Random name, ancestry, background, class, level - feat and skill assignments per
 
 3. **(Optional) The random name generator uses a variety of methods (at random) to generate a name.  Should all of these methods fail, the generator falls back to a hardcoded list of names stored in a json list at json-assets/name/names.json which you can source or create yourself.  
 
-**This should never be needed, even if all API calls for random name generation fail as a python version of the Skeeto Fantasy Name Generator (which is based on the RinkWorks fantasy name generator) is hardcoded (skeetorink.py).
+**This should never be needed (even if all API calls for random name generation fail) as a python version of the Skeeto Fantasy Name Generator (which is based on the RinkWorks fantasy name generator) is hardcoded (skeetorink.py).  Should every method fail, a list of the 7 most flattering names in existence is also hardcoded into the selector function.
 
 ###### Comments/Disclaimers
 
@@ -42,4 +42,6 @@ IronArachne - https://names.ironarachne.com
 RandomAPI - https://randomapi.dev
 Skeeto Fantasy Name Generator - https://github.com/skeeto/fantasyname/
 RinkWorks Fantasy Name Generator - http://rinkworks.com/namegen/
+
+Special thanks to my sister for testing and keeping me honest.
 
